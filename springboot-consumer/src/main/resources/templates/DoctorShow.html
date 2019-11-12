@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入EasyUI的样式文件-->
+    <link rel="stylesheet" href="../EasyUI/themes/default/easyui.css" type="text/css"/>
+
+    <!-- 引入EasyUI的图标样式文件-->
+    <link rel="stylesheet"
+          href="../EasyUI/themes/icon.css" type="text/css"/>
+
+
+
+
+</head>
+<body>
+<a id="doctor-add" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+<a id="doctor-rem" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">批量删除</a>
+<table id="doctor-table"></table>
+<div id="doctor-div"></div>
+<script type="text/javascript" src="../EasyUI/jquery.min.js"></script>
+<script type="text/javascript" src="../EasyUI/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../EasyUI/locale/easyui-lang-zh_CN.js"></script>
+
+
+
+<script type="text/javascript">
+    querydoc=function(){
+            $('#doctor-table').datagrid({
+                url:'../doctor/getdoctorList',
+                /* 只允许选择一行 */
+                singleSelect:true,
+                /* 只有点击复选框才能被选中 */
+                checkOnSelect:false,
+                /* 选中行将不选择复选框 */
+                selectOnCheck:false,
+                columns:[
+                    [
+                        {field:'check',checkbox:true},
+                        {field:'docid',title:'医生id',width:100},
+                        {field:'docname',title:'医生名称',width:100},
+                        {field:'docage',title:'医生年龄',width:100},
+                        {field:'docsex',title:'医生性别',width:100,
+                            formatter:function(val,row,index){
+                                return val == 1 ?'男':'女';
+                            }
+                        },
+                        {field:'caozuo',title:'操作',width:100,
+                            formatter:function(val,row,index){
+                                return "<input type='button' onclick='todocById("+row.docid+")' value='修改'>"
+
+                            }
+                        },
+                    ]
+                ]
+            });
+        }
+    //添加
+    $(function(){
+        $("#doctor-add").linkbutton({
+            onClick:function(){
+                $('#doctor-div').dialog({
+                    title: '添加医生信息',
+                    width: 400,
+                    height: 300,
+                    href: '../doctor/toAdddoctor',
+                    modal: false,
+                    buttons:[{
+                        text:'保存',
+                        handler:function(){
+//		 				提交form表单_edit-stu-form
+                            $('#addForm').form('submit', {
+                                url:"../doctor/adddoctor",
+                                onSubmit: function(){
+//		 				       	提交请求前执行该函数
+//		 				       	函数内一般进行表单验证
+//		 				       	如果return false，则终止表单提交
+//		 						如果 return  true，则照常提交表单
+                                },
+                                success:function(data){
+                                    if(data>0){
+
+                                        $("#doctor-table").datagrid("reload")
+                                        $('#doctor-div').dialog('close');
+                                    }
+                                }
+                            });
+                        }
+                    },{
+                        text:'关闭',
+                        handler:function(){
+                            $('#doctor-div').dialog('close')
+                        }
+                    }]
+                });
+            }
+        })
+    })
+    //批量删除
+    $("#doctor-rem").linkbutton({
+        onClick:function(){
+// 			1.获取被选中的复选框的id——————getChecked
+            var  str= "";
+            var arr= $("#doctor-table").datagrid('getChecked')
+            for (var i = 0; i < arr.length; i++) {
+                str += ","+arr[i].docid
+            }
+            str = str.substring(1);
+
+// 			2.调用后台代码删除
+            $.ajax({
+                type:"post",
+                url:"../doctor/deletedoctor",
+                data:{id:str},
+                success:function(){
+// 						刷新列表
+                    $("#doctor-table").datagrid('load')
+                }
+            })
+        }
+    })
+    //修改
+    function todocById(docid){
+        $('#doctor-div').dialog({
+            title: '修改医生信息',
+            width: 400,
+            height: 400,
+            href: '../doctor/querydoctorById?id='+docid,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    $('#addForm').form('submit', {
+                        url:"../doctor/updatedoctor",
+                        onSubmit: function(){
+                        },
+                        success:function(data){
+                            if(data>0){
+                                $('#doctor-table').datagrid("reload");
+                                $('#doctor-div').dialog("close");
+                            }
+                        }
+                    });
+                }
+            },{
+                text:'关闭',
+                handler:function(){
+                    $('#doctor-div').dialog("close");
+                }
+            }]
+        });
+    }
+    $(function(){
+        querydoc();
+
+    })
+</script>
+</body>
+</html>

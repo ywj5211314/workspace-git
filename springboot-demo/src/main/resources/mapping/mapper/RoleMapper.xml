@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.mapper.RoleMapper" >
+
+
+  <select id="getroleList" resultType="com.jk.model.Role">
+  	select * from t_role
+  </select>
+  <select id="queryMenuTree" resultType="com.jk.model.Menu">
+  	select * from t_menu where pid = #{pid}
+  </select>
+  <select id="queryMenuIdByRid" resultType="java.lang.Integer">
+  	select rm.meid from t_role_menu rm where rm.roid = #{rid}
+  </select>
+
+
+    <delete id="deleteMenuByRid">
+  	delete from t_role_menu where roid = #{rid}
+  </delete>
+
+    <insert id="saveRoleMenu">
+        insert into t_role_menu(roid,meid) values
+        <foreach item="mid" index="index" collection="mids" separator=",">
+            (#{rid},${mid})
+        </foreach>
+    </insert>
+</mapper>

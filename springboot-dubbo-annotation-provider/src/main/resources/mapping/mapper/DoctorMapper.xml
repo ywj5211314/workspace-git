@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.mapper.DoctorMapper" >
+
+
+  <select id="getdoctorList" resultType="com.jk.model.Doctor">
+    SELECT  * FROM t_doctor;
+  </select>
+  <insert id="adddoctor">
+   insert into t_doctor (docname, docage,
+      docsex)
+    values (#{docname}, #{docage},
+      #{docsex})
+  </insert>
+  <delete id="deletedoctor">
+    delete from t_doctor
+    where docid in (${id})
+  </delete>
+    <select id="querydoctorById" resultType="com.jk.model.Doctor">
+        select * from t_doctor where docid = #{id}
+    </select>
+    <update id="updatedoctor">
+      update t_doctor
+    set docname = #{docname},
+      docage = #{docage},
+      docsex = #{docsex}
+    where docid = #{docid}
+    </update>
+  <select id="queryDoctor" resultType="com.jk.model.Doctor">
+    SELECT  * FROM t_doctor;
+  </select>
+  <insert id="addDoctor" parameterType="java.util.List" >
+    insert into t_doctor (docname,docage,docsex)
+    VALUES
+    <foreach collection="list" item="l" separator=",">
+      (#{l.docname},#{l.docage},#{l.docsex})
+
+    </foreach>
+
+  </insert>
+</mapper>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入EasyUI的样式文件-->
+    <link rel="stylesheet"
+          href="../EasyUI/themes/default/easyui.css" type="text/css"/>
+
+    <!-- 引入EasyUI的图标样式文件-->
+    <link rel="stylesheet"
+          href="../EasyUI/themes/icon.css" type="text/css"/>
+
+</head>
+<body>
+<div id="cc" class="easyui-layout" fit=true>
+    <div data-options="region:'north',title:'主题页面',split:false" style="height:150px;"></div>
+    <div data-options="region:'west',title:'菜单展示',split:false" style="width:300px;">
+        <ul id="pur-shu"></ul>
+    </div>
+    <div data-options="region:'center',title:'列表展示'">
+        <div id="pur-div" class="easyui-tabs" fit=true>
+            <div title="欢迎使用" style="padding:20px;display:none;">
+                欢迎使用
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 引入JQuery -->
+<script type="text/javascript"
+        src="../EasyUI/jquery.min.js"></script>
+
+<!-- 引入EasyUI -->
+<script type="text/javascript"
+        src="../EasyUI/jquery.easyui.min.js"></script>
+
+<!-- 引入EasyUI的中文国际化js，让EasyUI支持中文 -->
+<script type="text/javascript"
+        src="../EasyUI/locale/easyui-lang-zh_CN.js"></script>
+
+<script type="text/javascript">
+    /* 构建树 */
+    $(function(){
+        $("#pur-shu").tree({
+            url:"../tree/querytree",
+            //节点的点击事件，node代表当前点击的节点对象
+            onClick: function(node){
+                //alert(node.text);  // 在用户点击的时候提示
+
+                if(node.url != null){
+
+// 				点击树节点时，添加选项卡的标签页   涉及到tabs组件的三个方法：exists、select、add
+
+// 				判断该标签页是否已经存在_使用exists方法 根据标题进行判断
+                    if($("#pur-div").tabs("exists",node.text)){
+// 					如果已经存在————选中该标签页——————使用select方法 根据标题选中
+                        $("#pur-div").tabs("select",node.text)
+                    }else{
+//	 				没有存在时——添加该标签页
+                        $("#pur-div").tabs("add",{
+                            closable:true,
+                            title:node.text,
+                            href:"../"+node.url
+                        })
+                    }
+                }
+//
+
+            }
+        })
+    })
+</script>
+
+</body>
+</html>

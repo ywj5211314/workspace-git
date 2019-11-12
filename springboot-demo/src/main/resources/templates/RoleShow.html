@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table id="role-table"></table>
+<div id="role-div"></div>
+<script type="text/javascript">
+    queryro=function(){
+            $('#role-table').datagrid({
+                url:'../role/getroleList',
+                /* 只允许选择一行 */
+                singleSelect:true,
+                /* 只有点击复选框才能被选中 */
+                checkOnSelect:false,
+                /* 选中行将不选择复选框 */
+                selectOnCheck:false,
+                columns:[
+                    [
+
+                    {field:'roleid',title:'角色id',width:100},
+                    {field:'rolename',title:'角色名称',width:100},
+                    {field:'caozuo',title:'操作',width:100,
+                        formatter:function(val,row,index){
+                            return "<input type='button' onclick='changeRolemenu("+row.roleid+",\""+row.rolename+"\")' value='设置权限'>"
+
+                        }
+                    },
+                ]
+                ]
+            });
+        }
+    changeRolemenu=function(roleid,rolename){
+        $('#role-div').dialog({
+            title: '设置'+rolename+'de权限',
+            width: 400,
+            height: 200,
+            closed: false,
+            href: '../role/togetRoleMenu?rid='+roleid,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+// 			1.获取被选中的树节点——————————最终得到多个权限id字符串
+                    var menuArr = $('#rolemenu-ul').tree("getChecked");
+//			2.获取半选中状态的节点-----indeterminate指的是不确定的半选中状态的节点
+                    var nodes = $('#rolemenu-ul').tree('getChecked','indeterminate');
+                    console.info(nodes)
+                    var mids = "";
+                    console.info(menuArr)
+                    for (var i = 0; i < menuArr.length; i++) {
+                        mids += ","+menuArr[i].id;
+                    }
+                    for (var i = 0; i < nodes.length; i++) {
+                        mids += ","+nodes[i].id;
+                    }
+                    mids = mids.substring(1);
+                    alert(mids)
+// 			2.ajax请求后台保存数据
+                    $.ajax({
+                        type:"post",
+                        url:"../role/saveRoleMenu",
+                        data:{rid:roleid,meid:mids},
+                        success:function(msg){
+                            if(msg == 'suc'){
+                                $('#role-div').dialog("close")
+                                $.messager.show({
+                                    title:'新消息',
+                                    msg:'操作成功',
+                                    timeout:2000,
+                                    showType:'slide'
+                                });
+
+                            }
+                        }
+                    })
+                }
+            },{
+                text:'取消',
+                handler:function(){
+                    $('#role-div').dialog("close")
+                }
+            }]
+        })
+    }
+    $(function(){
+        queryro();
+
+    })
+
+</script>
+</body>
+</html>

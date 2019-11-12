@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.mapper.TreeMapper" >
+	<select id="queryMenusByPid" resultType="com.jk.model.Menu">
+    select * from t_menu where pid = #{pid}
+    </select>
+
+	<select id="queryUserMenuTree" resultType="com.jk.model.Menu">
+    SELECT DISTINCT m.*
+
+	FROM t_user_role ur , t_role_menu rm , t_menu m
+
+	where
+	ur.roid = rm.roid
+	and rm.meid = m.id
+	and ur.usid = #{userid}
+	and m.pid = #{pid}
+  </select>
+
+</mapper>

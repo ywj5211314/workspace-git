@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table id="user-table"></table>
+<div id="user-div"></div>
+
+
+<script type="text/javascript">
+
+    queryro=function(){
+            $('#user-table').datagrid({
+                url:'../user/getuserList',
+                /* 只允许选择一行 */
+                /*  singleSelect:true,
+                 /* 只有点击复选框才能被选中 */
+                checkOnSelect:false,
+                /* 选中行将不选择复选框 */
+                selectOnCheck:false,
+                /* 开启分页 */
+                pagination:true,
+                /* 定义分页工具栏的位置 */
+                pagePosition:'both',
+                pageNumber:1,
+                pageSize:3,
+                pageList:[3,5,8,10],
+                columns:[
+                    [
+                    {field:'check',checkbox:true},
+                    {field:'userid',title:'用户id',width:100},
+                    {field:'username',title:'用户名称',width:100},
+                    {field:'caozuo',title:'操作',width:100,
+                        formatter:function(val,row,index){
+                            return "<input type='button' onclick='changeUserRole("+row.userid+",\""+row.username+"\")' value='设置角色'>"
+
+                        }
+                    },
+                ]
+                ]
+            });
+        }
+    changeUserRole=function(userid,username){
+        $('#user-div').dialog({
+            title: '设置'+username+'角色',
+            width: 400,
+            height: 200,
+            closed: false,
+            href: '../user/togetUserRole?id='+userid,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    var rolearr = $("[name='rids']:checked");
+                    var rids = "";
+                    for (var i = 0; i < rolearr.length; i++) {
+                        rids += ","+rolearr[i].value;
+                    }
+                    rids = rids.substring(1);
+
+                    $.ajax({
+                        type:"post",
+                        url:"../user/saveUserRole",
+                        data:{userid:userid,rids:rids},
+                        success:function(msg){
+                            if(msg == 'suc'){
+                                $('#user-div').dialog("close")
+                                $.messager.show({
+                                    title:'新消息',
+                                    msg:'操作成功',
+                                    timeout:2000,
+                                    showType:'slide'
+                                });
+
+                            }
+                        }
+                    })
+                }
+            },{
+                text:'取消',
+                handler:function(){
+                    $('#user-div').dialog("close")
+                }
+            }]
+        });
+    }
+
+    $(function(){
+        queryro();
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+   <tr th:each="r:${roles}" var="r">
+        <td>
+            <input type="checkbox" th:checked="${r.status}" name="rids" th:value="${r.roleid}">
+        </td>
+        <td th:text="${r.rolename}"></td>
+    </tr>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul id="rolemenu-ul"></ul>
+
+<script type="text/javascript">
+    $(function(){
+        $('#rolemenu-ul').tree({
+            url:'../role/queryRoleMenu',
+            checkbox:true
+        });
+    })
+</script>
+
+
+<!--<tr th:each="r:${roles}" var="r">
+    <td>
+        <input type="checkbox" th:checked="${r.status}" name="rids" th:value="${r.roleid}">
+    </td>
+    <td th:text="${r.rolename}"></td>
+</tr>-->
+</body>
+</html>
